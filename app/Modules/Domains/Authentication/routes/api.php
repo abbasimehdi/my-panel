@@ -1,8 +1,7 @@
 <?php
 
 
-use App\Modules\Domains\Authentication\src\Controllers\AuthController;
-
+use App\Modules\Domains\Authentication\src\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login']);
