@@ -3,6 +3,8 @@
 namespace App\Modules\Domains\Core\src\Repository;
 
 
+
+
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
