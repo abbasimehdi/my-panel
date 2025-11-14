@@ -1,14 +1,24 @@
 <?php
 
-namespace App\Modules\Domains\Authentication\src\Controllers;
+namespace App\Modules\Domains\Authentication\src\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Modules\Domains\Authentication\src\Http\Requests\LoginRequest;
+use App\Modules\Domains\Authentication\src\Repository\UserRepository;
+use App\Modules\Domains\Authentication\src\Resources\UserResource;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        private UserRepository  $userRepository
+    )
+    {
+    }
+
     public function register(Request $request)
     {
         $request->validate([
@@ -28,26 +38,14 @@ class AuthController extends Controller
         return response()->json(['token' => $token], 201);
     }
 
-    public function login(Request $request)
+    /**
+     * @param Request $request
+     * @return UserResource
+     */
+    public function login(LoginRequest $request): UserResource
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
+        return new UserResource((object)[
+            'token' => $this->userRepository->login($request->all()),
         ]);
-
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
-        }
-
-        $token = $user->createToken('API Token')->accessToken;
-
-        return response()->json(['token' => $token]);
-    }
-
-    public function user(Request $request)
-    {
-        return response()->json($request->user());
     }
 }
